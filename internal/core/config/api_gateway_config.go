@@ -2,9 +2,10 @@ package config
 
 import (
 	"errors"
-	"os"
 	"strconv"
 	"time"
+
+	"github.com/jamal23041989/go-checklist-todo/internal/core/tools"
 )
 
 type APIGatewayConfig struct {
@@ -15,37 +16,18 @@ type APIGatewayConfig struct {
 }
 
 func LoadAPIGatewayConfig() (*APIGatewayConfig, error) {
-	var cfg APIGatewayConfig
+	apiGatewayConfig := &APIGatewayConfig{
+		Port:          tools.GetEnvOrDefault("HTTP_PORT", "8080"),
+		Timeout:       tools.ParseDurationOrDefault("HTTP_TIMEOUT", "30s"),
+		DBCoreAddress: tools.GetEnvOrDefault("DB_CORE_ADDRESS", "localhost:50051"),
+		LogLevel:      tools.GetEnvOrDefault("LOG_LEVEL", "info"),
+	}
 
-	cfg.Port = getEnvOrDefault("HTTP_PORT", "8080")
-	cfg.Timeout = cfg.parseDurationOrDefault("HTTP_TIMEOUT", "30s")
-	cfg.DBCoreAddress = getEnvOrDefault("DB_CORE_ADDRESS", "localhost:50051")
-	cfg.LogLevel = getEnvOrDefault("LOG_LEVEL", "info")
-
-	if err := validateAPIGatewayConfig(cfg); err != nil {
+	if err := validateAPIGatewayConfig(*apiGatewayConfig); err != nil {
 		return nil, err
 	}
 
-	return &cfg, nil
-}
-
-func (g *APIGatewayConfig) parseDurationOrDefault(key, defaultValue string) time.Duration {
-	envValue := os.Getenv(key)
-	if envValue == "" {
-		// Попробуем парсить defaultValue в time.Duration
-		duration, err := time.ParseDuration(defaultValue)
-		if err != nil {
-			return 30 * time.Second
-		}
-		return duration
-	}
-
-	duration, err := time.ParseDuration(envValue)
-	if err != nil {
-		return 30 * time.Second
-	}
-
-	return duration
+	return apiGatewayConfig, nil
 }
 
 func validateAPIGatewayConfig(g APIGatewayConfig) error {
@@ -62,11 +44,4 @@ func validateAPIGatewayConfig(g APIGatewayConfig) error {
 	}
 
 	return nil
-}
-
-func getEnvOrDefault(key, defaultValue string) string {
-	if envValue := os.Getenv(key); envValue != "" {
-		return envValue
-	}
-	return defaultValue
 }
