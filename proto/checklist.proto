@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package checklist;
+
+option go_package = "github.com/jamal23041989/go-checklist-todo/internal/generated/checklist_pb";
+
+service TaskService {
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+  rpc GetTaskList(GetTaskListRequest) returns (GetTaskListResponse);
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
+  rpc MarkTaskDone(MarkTaskDoneRequest) returns (MarkTaskDoneResponse);
+}
+
+message CreateTaskRequest {
+  string name = 1;
+  string description = 2;
+}
+
+message CreateTaskResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_done = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}
+
+message GetTaskListRequest {
+  // Пустой запрос, получаем все задачи
+}
+
+message GetTaskListResponse {
+  repeated Task tasks = 1;
+}
+
+message DeleteTaskRequest {
+  string id = 1;
+}
+
+message DeleteTaskResponse {
+  bool success = 1;
+}
+
+message MarkTaskDoneRequest {
+  string id = 1;
+}
+
+message MarkTaskDoneResponse {
+  bool success = 1;
+}
+
+message Task {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  bool is_done = 4;
+  string created_at = 5;
+  string updated_at = 6;
+}

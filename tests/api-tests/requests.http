@@ -1,0 +1,19 @@
+### Описание: Создание нового пользователя
+# Используем переменную {{host}} из окружения
+POST {{host}}/api/v1/users
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Senior Mentor",
+  "email": "mentor@go.dev"
+}
+
+> {%
+    // Тут можно писать небольшие скрипты на JS для проверки ответа
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+    // Можно сохранить ID из ответа в глобальную переменную для следующих запросов
+    client.global.set("new_user_id", response.body.id);
+%}
