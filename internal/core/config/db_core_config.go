@@ -103,10 +103,10 @@ func validateRedisConfig(r RedisConfig) error {
 	return nil
 }
 
-// DBCoreConfig holds configuration for DB Core microservice.
+// DBConfig holds configuration for DB Core microservice.
 // This service handles database operations and caching for task management.
 // Combines PostgreSQL for persistent storage and Redis for caching.
-type DBCoreConfig struct {
+type DBConfig struct {
 	DBPostgres PostgresConfig // PostgreSQL database configuration
 	DBRedis    RedisConfig    // Redis cache configuration
 }
@@ -115,7 +115,7 @@ type DBCoreConfig struct {
 // Creates and validates both PostgreSQL and Redis configurations.
 //
 // Returns:
-//   - *DBCoreConfig: Loaded configuration with both databases
+//   - *DBConfig: Loaded configuration with both databases
 //   - error: Validation error if any database configuration is invalid
 //
 // Example:
@@ -124,7 +124,7 @@ type DBCoreConfig struct {
 //	if err != nil {
 //	    log.Fatal("Failed to load DB config:", err)
 //	}
-func LoadDBCoreConfig() (*DBCoreConfig, error) {
+func LoadDBCoreConfig() (*DBConfig, error) {
 	postgresConfig := &PostgresConfig{
 		Host:     tools.GetEnvOrDefault("POSTGRES_HOST", "localhost"),
 		Port:     tools.GetEnvOrDefault("POSTGRES_PORT", "5432"),
@@ -149,7 +149,7 @@ func LoadDBCoreConfig() (*DBCoreConfig, error) {
 		return nil, err
 	}
 
-	return &DBCoreConfig{
+	return &DBConfig{
 		DBPostgres: *postgresConfig,
 		DBRedis:    *redisConfig,
 	}, nil
